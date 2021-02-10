@@ -22,6 +22,26 @@ namespace ShapeUtilities
           
         }
 
+        /// <summary>
+        /// Gets the bounding box of a shape implemeting IHasPoints
+        /// </summary>
+        /// <returns>Null if shape does not a have a points collection otherwise returns a boundingbox enclosing the points</returns>
+        public BoundingBox GetExtent()
+        {
+            if (this is IHasPoints)
+            {
+                var obj = (IHasPoints)this;
+
+                var xes = obj.Points.Select(o => o.X).ToList();
+                var yes = obj.Points.Select(o => o.Y).ToList();
+
+                return new BoundingBox() { X1 = xes.Min(), X2 = xes.Max(), Y1 = yes.Min(), Y2 = yes.Max() };
+            }
+            else return null;
+          
+        }
+
+
         public string GetWKT()
         {
 
@@ -66,11 +86,11 @@ namespace ShapeUtilities
             if (this is PolyLineShape)
             {
                 var obj = (PolyLineShape)this;
-                sb.Append("POLYLINE(");
+                sb.Append("LINESTRING(");
 
                 for (int parts = 0; parts < obj.NumParts; parts++)
                 {
-                    sb.Append("(");
+                  //  sb.Append("(");
                     int index = obj.Parts[parts];
                     int lastindex = (parts < obj.NumParts - 1 ? obj.Parts[parts + 1] : obj.NumPoints - 1);
 
@@ -83,12 +103,12 @@ namespace ShapeUtilities
 
                     sb.Remove(sb.Length - 1, 1);
 
-                    sb.Append(")");
+                  //  sb.Append(")");
 
-                    if (parts < obj.NumParts - 1)
-                    {
-                        sb.Append(", ");
-                    }
+                   // if (parts < obj.NumParts - 1)
+                   // {
+                    //    sb.Append(", ");
+                    //}
                 }
 
                 sb.Append(")");
